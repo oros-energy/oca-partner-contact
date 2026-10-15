@@ -87,16 +87,31 @@ class ResPartner(models.Model):
             ).create([vals])
         return created_partners
 
+    def _compute_is_company(self):
+        """Keep a partner without parent a company once it is one, even without
+        Tax ID (e.g. created with ``is_company=True``). It stops being a company
+        when it gets a parent or when ``is_company=False`` is written.
+        """
+        companies = self.filtered(lambda p: p.is_company and not p.parent_id)
+        companies.is_company = True
+        return super(ResPartner, self - companies)._compute_is_company()
+
     @api.model
     def _get_is_company_from_vals(self, vals):
-        """Since Odoo 20.0, ``is_company`` can not be set anymore: a partner is a
-        company if it is its own commercial entity and has a Tax ID (see
-        ``_compute_is_company``). Guess it from ``vals``, so names are split the same
-        way as once the partner is saved.
+        """Since Odoo 20.0, a partner is a company if it is its own commercial
+        entity and has a Tax ID (see ``_compute_is_company``). Guess it from
+        ``vals``, so names are split the same way as once the partner is saved.
+        An explicit ``is_company=True`` (value or default) wins, as it is kept.
         """
         if vals.get("parent_id"):
             return False
-        return self.new({"vat": vals.get("vat")}).has_vat
+        if "is_company" in vals:
+            explicit = vals["is_company"]
+        else:
+            explicit = self.env.context.get("default_is_company")
+        if explicit:
+            return True
+        return bool(self.new({"vat": vals.get("vat")}).is_company)
 
     def get_extra_default_copy_values(self):
         """Method to add '(copy)' suffix to lastname or firstname, depending on name

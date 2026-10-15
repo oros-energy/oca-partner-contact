@@ -8,4 +8,5 @@ from . import (
     test_order,
     test_copy,
     test_config_settings,
+    test_company_without_vat,
 )
