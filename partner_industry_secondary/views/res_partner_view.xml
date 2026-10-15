@@ -26,10 +26,11 @@
             >
                 <div
                     invisible="not is_company and not show_partner_industry_for_person"
-                    class="d-flex align-items-baseline"
+                    class="d-flex align-items-baseline w-md-50 gap-2"
                 >
                     <i
-                        class="fa fa-fw me-1 fa-industry text-primary"
+                        class="oi d-none d-md-block"
+                        data-icon="factory"
                         title="Main Industry"
                     />
                     <field
@@ -40,10 +41,11 @@
                 </div>
                 <div
                     invisible="not is_company and not show_partner_industry_for_person"
-                    class="d-flex align-items-baseline"
+                    class="d-flex align-items-baseline w-md-50 gap-2"
                 >
                     <i
-                        class="fa fa-fw me-1 fa-industry text-primary"
+                        class="oi d-none d-md-block"
+                        data-icon="factory"
                         title="Secondary Industries"
                     />
                     <field name="secondary_industry_ids" widget="many2many_tags" />

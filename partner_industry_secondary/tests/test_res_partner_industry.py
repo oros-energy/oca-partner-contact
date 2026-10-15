@@ -52,7 +52,7 @@ class TestResPartnerIndustry(common.TransactionCase):
 
     def test_03_check_recursion(self):
         """Checks that a recursive hierarchy among industries is not allowed."""
-        with self.assertRaisesRegex(UserError, "Recursion Detected."):
+        with self.assertRaisesRegex(UserError, "creating a loop"):
             self.industry_main.parent_id = self.industry_child.id
 
     def test_04_name(self):
