@@ -111,7 +111,10 @@ class ResPartner(models.Model):
             explicit = self.env.context.get("default_is_company")
         if explicit:
             return True
-        return bool(self.new({"vat": vals.get("vat")}).is_company)
+        # Same heuristic as ``_compute_has_vat``. A new record would call
+        # ``default_get`` again and recurse.
+        vat = vals.get("vat")
+        return bool(vat) and vat not in ("/", "na", "NA")
 
     def get_extra_default_copy_values(self):
         """Method to add '(copy)' suffix to lastname or firstname, depending on name
